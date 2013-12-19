@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pager_main_activity_title_strip_background">#004400</color>
+    <color name="pager_main_activity_title_strip_textcolor">#FFFFFF</color>
+    <color name="action_bar_background">#009900</color>
+    <color name="action_bar_text">#FFFFFF</color>
+</resources>
