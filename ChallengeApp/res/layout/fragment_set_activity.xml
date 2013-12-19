@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_set_activity"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/hello_world" />
+<LinearLayout
+    android:id="@+id/fragment_set_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="15dp"
+    android:paddingLeft="15dp"
+    android:paddingBottom="15dp"
+    android:paddingRight="15dp"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <TextView
+        android:id="@+id/text_set_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:text="@string/text_set_description" />
+    
+    <TextView
+        android:id="@+id/text_set_interval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:text="@string/text_set_interval" />
+    
+    <Spinner
+        android:id="@+id/spinner_set"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp" />
+    
+    <TextView
+        android:id="@+id/text_set_entry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:text="@string/text_set_entry" />
+    
+    <LinearLayout
+        android:id="@+id/fragment_set_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    
+    	<EditText 
+        	android:id="@+id/edit_set"
+        	android:inputType="numberSigned"
+        	android:layout_weight="1"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content" />
+    	
+    	<ImageButton
+    	    android:id="@+id/button_set_timer"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:contentDescription="@string/set_timer_description"
+    	    android:src="@drawable/ic_action_time" />
+    	
+    </LinearLayout>
+    
+</LinearLayout>

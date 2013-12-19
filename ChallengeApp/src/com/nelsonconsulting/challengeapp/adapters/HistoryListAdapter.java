@@ -3,31 +3,30 @@ package com.nelsonconsulting.challengeapp.adapters;
 import java.util.List;
 import java.util.Map;
 
-import com.nelsonconsulting.challengeapp.R;
-
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-public class TestListAdapter extends BaseExpandableListAdapter {
+import com.nelsonconsulting.challengeapp.R;
+
+public class HistoryListAdapter extends BaseExpandableListAdapter {
 
 	private Context context;
-	private List<String> header;
+	private List<String> headers;
 	private Map<String, List<String>> data;
 	
-	public TestListAdapter(Context context, List<String> header, Map<String, List<String>> data) {
+	public HistoryListAdapter(Context context, List<String> headers, Map<String, List<String>> data) {
 		this.context = context;
-		this.header = header;
+		this.headers = headers;
 		this.data = data;
 	}
 	
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return data.get(header.get(groupPosition)).get(childPosition);
+		return data.get(headers.get(groupPosition)).get(childPosition);
 	}
 
 	@Override
@@ -42,11 +41,11 @@ public class TestListAdapter extends BaseExpandableListAdapter {
 		// create the child view if it is not already
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.list_item_testinfo, null);
+			convertView = inflater.inflate(R.layout.list_history_item, null);
 		}
 		
 		// set the item text
-		TextView tv = (TextView)convertView.findViewById(R.id.text_testinfo_item);
+		TextView tv = (TextView)convertView.findViewById(R.id.text_history_item);
 		tv.setText((String)getChild(groupPosition, childPosition));
 		
 		return convertView;
@@ -54,17 +53,17 @@ public class TestListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return data.get(header.get(groupPosition)).size();
+		return data.get(headers.get(groupPosition)).size();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
-		return header.get(groupPosition);
+		return headers.get(groupPosition);
 	}
 
 	@Override
 	public int getGroupCount() {
-		return header.size();
+		return headers.size();
 	}
 
 	@Override
@@ -78,12 +77,11 @@ public class TestListAdapter extends BaseExpandableListAdapter {
 		// create the child view if it is not already
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.list_header_textinfo, null);
+			convertView = inflater.inflate(R.layout.list_history_header, null);
 		}
 		
 		// set the item text
-		TextView tv = (TextView)convertView.findViewById(R.id.text_testinfo_header);
-		tv.setTypeface(null, Typeface.BOLD);
+		TextView tv = (TextView)convertView.findViewById(R.id.text_history_header);
 		tv.setText((String)getGroup(groupPosition));
 		
 		return convertView;
@@ -95,7 +93,8 @@ public class TestListAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public boolean isChildSelectable(int arg0, int arg1) {
+	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		return true;
 	}
+
 }

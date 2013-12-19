@@ -5,7 +5,7 @@
     android:orientation="vertical" >
     
 	<TextView
-	    android:id="@+id/text_testinfo_item"
+	    android:id="@+id/text_history_item"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:paddingTop="5dp"

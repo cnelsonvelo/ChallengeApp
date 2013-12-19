@@ -5,24 +5,21 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.nelsonconsulting.challengeapp.fragments.SelectDateFragment;
+import com.nelsonconsulting.challengeapp.fragments.HistoryFragment;
 import com.nelsonconsulting.challengeapp.fragments.SetFragment;
-import com.nelsonconsulting.challengeapp.fragments.TestFragment;
 
 public class MainActivityPagerAdapter extends FragmentPagerAdapter {
 	
-	private static int PAGE_COUNT = 3;
+	private static int PAGE_COUNT = 2;
 	
 	private Context context;
-	private SelectDateFragment selectDateFragment;
+	private HistoryFragment historyFragment;
 	private SetFragment setFragment;
-	private TestFragment testFragment;
 
 	public MainActivityPagerAdapter(FragmentManager fm, Context context) {
 		super(fm);
-		selectDateFragment = new SelectDateFragment();
 		setFragment = new SetFragment(); 
-		testFragment = new TestFragment();
+		historyFragment = new HistoryFragment();
 		this.context = context;
 	}
 
@@ -31,11 +28,9 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
 
 		switch(page) {
 		case 0:
-			return selectDateFragment;
-		case 1:
-			return testFragment;
-		case 2:
 			return setFragment;
+		case 1:
+			return historyFragment;
 		}
 		
 		return null;
@@ -50,11 +45,9 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
 	public CharSequence getPageTitle(int position) {
 		switch(position) {
 		case 0:
-			return context.getString(SelectDateFragment.PAGE_TITLE_ID);
-		case 1:
-			return context.getString(TestFragment.PAGE_TITLE_ID);
-		case 2:
 			return context.getString(SetFragment.PAGE_TITLE_ID);
+		case 1:
+			return context.getString(HistoryFragment.PAGE_TITLE_ID);
 		}
 		
 		return "";

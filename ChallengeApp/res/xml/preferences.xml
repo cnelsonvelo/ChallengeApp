@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:title="@string/pref_category_notification">
+        <CheckBoxPreference 
+            android:key="pref_notify"
+            android:title="@string/pref_notify"
+            android:summary="@string/pref_notify_summary"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:key="pref_skip_notify"
+            android:title="@string/pref_skip_notify"
+            android:summary="@string/pref_skip_notify_summary"
+            android:dependency="pref_notify"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_category_interval">
+        <com.nelsonconsulting.challengeapp.preferences.TimePreference
+            android:key="pref_start_time"
+            android:title="@string/pref_start_time"
+            android:summary="@string/pref_start_time_summary" />
+    </PreferenceCategory>
+    
+</PreferenceScreen>
