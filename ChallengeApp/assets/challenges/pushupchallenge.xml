@@ -15,7 +15,7 @@
             <Type>Normal</Type>
             <IntervalType>Hourly</IntervalType>
             <SetType>TestPercent</SetType>
-            <Value>30</Value>
+            <SetValue>30</SetValue>
         </Set>
         <Set>
             <IntervalIndex>2</IntervalIndex>

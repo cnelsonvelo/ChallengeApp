@@ -17,7 +17,6 @@ import com.nelsonconsulting.challengeapp.XmlUtils;
 
 public class Challenge {
 
-	private static String CHALLENGE_TAG = "Challenge";
 	private static String NAME_TAG = "Name";
 	private static String ENDPOINT_TAG = "EndPoint";
 	private static String ENDPOINT_TYPE_TAG = "EndPointType";
@@ -187,7 +186,8 @@ public class Challenge {
 			// setup the parser
 			XmlPullParser parser = Xml.newPullParser();
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-			parser.require(XmlPullParser.START_TAG, null, CHALLENGE_TAG);
+			parser.setInput(stream, null);
+			parser.nextTag();
 			
 			while(parser.next() != XmlPullParser.END_TAG) {
 				if (parser.getEventType() != XmlPullParser.START_TAG) {
