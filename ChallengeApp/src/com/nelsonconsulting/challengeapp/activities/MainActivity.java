@@ -11,13 +11,19 @@ import android.view.MenuItem;
 
 import com.nelsonconsulting.challengeapp.R;
 import com.nelsonconsulting.challengeapp.adapters.MainActivityPagerAdapter;
+import com.nelsonconsulting.challengeapp.data.ChallengeCollection;
 
 public class MainActivity extends FragmentActivity {
+	
+	private ChallengeCollection challenges;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		// load the challenge files
+		challenges = new ChallengeCollection(getAssets());
 		
 		// get the view pager
 		ViewPager pager = (ViewPager)findViewById(R.id.pager_main_activity);

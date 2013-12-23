@@ -2,6 +2,8 @@ package com.nelsonconsulting.challengeapp;
 
 public class Constants {
 
+	public static String APP_LOG_TAG = "ChallengeApp";
+	
 	public enum EndpointType {
 		Value,
 		Days
