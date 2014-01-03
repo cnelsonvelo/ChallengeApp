@@ -21,5 +21,6 @@
     <string name="text_set_interval">Select the interval:</string>
     <string name="text_set_entry">Enter how many push-ups were done:</string>
     <string name="text_set_description">Record the number of push-ups done in each interval.</string>
+    <string name="dialog_create_challenge">Would you like to start a new challenge?</string>
 
 </resources>

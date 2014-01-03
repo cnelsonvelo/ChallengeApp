@@ -161,6 +161,7 @@ public class Challenge {
 	private String name;
 	private EndPoint endPoint;
 	private SparseArray<SetInfo> setInfo;
+	private SetInfo testInfo;
 	
 	public String getName() {
 		return name;
@@ -172,6 +173,10 @@ public class Challenge {
 	
 	public SparseArray<SetInfo> getSetInfo() {
 		return setInfo;
+	}
+	
+	public SetInfo getTestInfo() {
+		return testInfo;
 	}
 	
 	public Challenge() {
@@ -231,7 +236,12 @@ public class Challenge {
 			if (name.equals(SET_TAG)) {
 				SetInfo set = challenge.new SetInfo();
 				set.parse(parser);
+				if (set.getType() == Type.Normal) {
 				challenge.setInfo.put(set.getIndex(), set);
+				}
+				else if (set.getType() == Type.Test) {
+					challenge.testInfo = set;
+				}
 			}
 		}
 		

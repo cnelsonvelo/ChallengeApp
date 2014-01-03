@@ -1,7 +1,5 @@
 package com.nelsonconsulting.challengeapp.preferences;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
@@ -33,12 +31,14 @@ public class TimePreference extends DialogPreference {
 	    @Override
 	    public void writeToParcel(Parcel dest, int flags) {
 	        super.writeToParcel(dest, flags);
+	        
 	        // Write the preference's value
 	        dest.writeString(value);  // Change this to write the appropriate data type
 	    }
 
 	    // Standard creator object using an instance of this class
-	    public static final Parcelable.Creator<SavedState> CREATOR =
+	    @SuppressWarnings("unused")
+		public static final Parcelable.Creator<SavedState> CREATOR =
 	            new Parcelable.Creator<SavedState>() {
 
 	        public SavedState createFromParcel(Parcel in) {
@@ -60,7 +60,7 @@ public class TimePreference extends DialogPreference {
 	}
 	
 	public static int getMinute(String time) {
-		return Integer.parseInt(time.substring(time.indexOf(":")));
+		return Integer.parseInt(time.substring(time.indexOf(":") + 1));
 	}
 	
 	public TimePreference(Context context, AttributeSet attrs) {
@@ -148,7 +148,7 @@ public class TimePreference extends DialogPreference {
 	    timePicker.setCurrentMinute(TimePreference.getMinute(myState.value));
 	}
 	
-	private String getTime() {
+	private String getTime() {		
 		hour = timePicker.getCurrentHour();
 		minute = timePicker.getCurrentMinute();
 		

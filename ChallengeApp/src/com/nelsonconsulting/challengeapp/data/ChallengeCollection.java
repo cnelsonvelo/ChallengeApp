@@ -17,7 +17,17 @@ public class ChallengeCollection {
 	private AssetManager assets;
 	private Map<String, String> challengeFiles;
 	
-	public ChallengeCollection(AssetManager mgr) {
+	private static ChallengeCollection instance;
+	
+	public static ChallengeCollection getInstance(AssetManager mgr) {
+		if (instance == null) {
+			instance = new ChallengeCollection(mgr);
+		}
+		
+		return instance;
+	}
+	
+	private ChallengeCollection(AssetManager mgr) {
 		challengeFiles = new HashMap<String, String>();
 		assets = mgr;
 		
@@ -31,7 +41,7 @@ public class ChallengeCollection {
 	
 	public Challenge getChallenge(String name) {
 		try {
-			Challenge challenge = Challenge.parse(assets.open(challengeFiles.get(name)));
+			Challenge challenge = Challenge.parse(assets.open(CHALLENGE_LOCATION + "/" + challengeFiles.get(name)));
 			
 			return challenge;
 		}
