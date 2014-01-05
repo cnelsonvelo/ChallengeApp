@@ -75,35 +75,33 @@ public class ChallengeService extends Service {
 		private void createNotification(int challengeId, int currentDay) {
 			
 			// get the sets waiting notifications
-			boolean test = false;
-			List<SetInfo> sets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Test, SetStatus.New);
-			for (SetInfo s : sets) {
-				test = true;
+			List<SetInfo> waitTests = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Test, SetStatus.Notified);
+			List<SetInfo> newTests = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Test, SetStatus.New);
+			for (SetInfo s : newTests) {
 				s.setStatus(SetStatus.Notified);
 				ChallengeDB.getInstance(getApplicationContext()).updateSet(s);
 			}
-			sets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Normal, SetStatus.New);
-			for (SetInfo s : sets) {
+			
+			List<SetInfo> waitSets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Normal, SetStatus.Notified);
+			List<SetInfo> newSets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Normal, SetStatus.New);
+			for (SetInfo s : newSets) {
 				s.setStatus(SetStatus.Notified);
 				ChallengeDB.getInstance(getApplicationContext()).updateSet(s);
 			}
 			
 			// get the content string
 			String content = "";
-			if (sets.size() == 0) {
+			if (newTests.size() == 0 && newSets.size() == 0) {
+				return;
+			}
+			else if ((waitTests.size() != 0 || newTests.size() != 0) && (waitSets.size() == 0 && newSets.size() == 0)) {
 				content = getString(R.string.notification_test_content);
 			}
-			else if (sets.size() == 1) {
-				if (test) 
-					content = getString(R.string.notification_both_content);
-				else
-					content = getString(R.string.notification_normal_content);
+			else if ((waitTests.size() == 0 && newTests.size() == 0) && (waitSets.size() != 0 || newSets.size() != 0)) {
+				content = getString(R.string.notification_single_content);
 			}
-			else if (sets.size() > 1) {
-				if (test)
-					content = getString(R.string.notification_both_multiple_content);
-				else
-					content = getString(R.string.notification_normal_multiple_content);
+			else {
+				content = getString(R.string.notification_multiple_content);
 			}
 			
 			// build the inbox style content
@@ -127,6 +125,8 @@ public class ChallengeService extends Service {
 		
 		private boolean handleSets(int challengeId, Challenge challenge, int currentChallengeDay) {
 			
+			boolean setCreated = false;
+			
 			// figure out which interval is currently active
 			double rem = Math.IEEEremainder(currentChallengeDay, challenge.getSetInfo().size());
 			int currentInterval = (int) rem;
@@ -146,9 +146,10 @@ public class ChallengeService extends Service {
 			for (int i = sets.size(); i <= set; i++) {
 				int value = DataHelper.getSetValue(challengeId, challenge.getSetInfo().get(currentInterval));
 				ChallengeDB.getInstance(getApplicationContext()).addSetEntry(challengeId, currentChallengeDay, Type.Normal, value);
+				setCreated = true;
 			}
 			
-			return false;
+			return setCreated;
 		}
 	
 		private boolean handleTests(int challengeId, Challenge challenge, int currentChallengeDay) {

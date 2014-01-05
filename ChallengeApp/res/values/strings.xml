@@ -22,12 +22,10 @@
     <string name="text_set_entry">Enter how many push-ups were done:</string>
     <string name="text_set_description">Record the number of push-ups done in each interval.</string>
     <string name="dialog_create_challenge">Would you like to start a new challenge?</string>
-    <string name="notification_test_content">You have a test to enter</string>
+    <string name="notification_test_content">You have a test to enter.</string>
     <string name="notification_set_inbox">you need to do %1$d %2$s</string>
-    <string name="notification_normal_content">You have a set to enter</string>
-    <string name="notification_normal_multiple_content">You have multiple sets to enter</string>
-    <string name="notification_both_content">You have a test and set to enter</string>
-    <string name="notification_both_multiple_content">You have a test and multiple sets to enter</string>
+    <string name="notification_single_content">You have a set to enter.</string>
+    <string name="notification_multiple_content">You have multiple items to enter.</string>
     <string name="notification_title">Time to challenge yourself</string>
 
 </resources>
