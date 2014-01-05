@@ -70,7 +70,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	}
 	
 	private boolean isDuringDay() {
-		String startTime = preferences.getString(Constants.PREF_START_TIME, "08:00");
+		String startTime = preferences.getString(Constants.PREF_START_TIME, "12:00");
 		int hours = preferences.getInt(Constants.PREF_HOURS, 9);
 		
 		// the current time

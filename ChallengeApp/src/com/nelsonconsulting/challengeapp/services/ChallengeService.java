@@ -3,12 +3,9 @@ package com.nelsonconsulting.challengeapp.services;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -18,21 +15,21 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.nelsonconsulting.challengeapp.Constants;
 import com.nelsonconsulting.challengeapp.Constants.ChallengeStatus;
+import com.nelsonconsulting.challengeapp.Constants.SetStatus;
+import com.nelsonconsulting.challengeapp.Constants.Type;
 import com.nelsonconsulting.challengeapp.R;
 import com.nelsonconsulting.challengeapp.data.Challenge;
 import com.nelsonconsulting.challengeapp.data.ChallengeCollection;
 import com.nelsonconsulting.challengeapp.data.ChallengeDB;
-import com.nelsonconsulting.challengeapp.data.ChallengeDB.ChallengeInfo;
 import com.nelsonconsulting.challengeapp.data.ChallengeDB.SetInfo;
-import com.nelsonconsulting.challengeapp.preferences.TimePreference;
+import com.nelsonconsulting.challengeapp.data.DataHelper;
 
 public class ChallengeService extends Service {
 
-	private ChallengeCollection challenges;
-	private ChallengeDB db;
 	private Looper looper;
 	private ServiceHandler handler;
 	private SharedPreferences preferences;
@@ -45,6 +42,7 @@ public class ChallengeService extends Service {
 		
 		@Override
 		public void handleMessage(Message msg) {
+			ChallengeDB db = ChallengeDB.getInstance(getApplicationContext());
 			List<ChallengeDB.ChallengeInfo> active = db.getChallenges(ChallengeStatus.Running);
 			
 			synchronized(this) {
@@ -57,62 +55,131 @@ public class ChallengeService extends Service {
 				// loop through the active challenges and see if any notifications are necessary
 				for (ChallengeDB.ChallengeInfo cInfo : active) {
 					
+					// get the challenge for this entry
+					Challenge challenge = ChallengeCollection.getInstance(getAssets()).getChallenge(cInfo.getName());
+					
 					// determine which day we are currently on
-					int day = current.get(Calendar.DAY_OF_YEAR) - cInfo.getStartDate().get(Calendar.DAY_OF_YEAR) + 1;
+					int currentChallengeDay = current.get(Calendar.DAY_OF_YEAR) - cInfo.getStartDate().get(Calendar.DAY_OF_YEAR) + 1;			
 					
-					// get the current set for the day
-					int set = getIntervalSet(cInfo, current, day);
+					handleTests(cInfo.getId(), challenge, currentChallengeDay);
+					handleSets(cInfo.getId(), challenge, currentChallengeDay);
 					
-					// get the sets currently in the db
-					List<SetInfo> sets = db.getSets(cInfo.getName(), day);
-					
-					// if the number of sets recorded in the db is less than the current, then add a new set to the db, and 
-					// notify the user
-					if (sets.size() < set) {
-						NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-							.setSmallIcon(R.drawable.ic_launcher)
-							.setContentTitle("Test Notification")
-							.setContentText("You have a set to do!");
-						NotificationManager mgr = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-						mgr.notify(0, builder.build());
-					}
+					// show the notifications if necessary
+					createNotification(cInfo.getId(), currentChallengeDay);
 				}
 			}
 			
 			stopSelf(msg.arg1);
 		}
 		
-		private int getIntervalSet(ChallengeInfo challenge, Calendar current, int day) {
+		private void createNotification(int challengeId, int currentDay) {
 			
-			// determine how many minutes into the day we are
-			String startString = preferences.getString(Constants.PREF_START_TIME, "08:00");
-			Calendar startTime = Calendar.getInstance();
-			startTime.set(Calendar.HOUR_OF_DAY, TimePreference.getHour(startString));
-			startTime.set(Calendar.MINUTE, TimePreference.getMinute(startString));
-			startTime.set(Calendar.SECOND, 0);
-			startTime.set(Calendar.MILLISECOND, 0);
-			int minutes = (int)(current.getTimeInMillis() - startTime.getTimeInMillis()) / (1000 * 60);
-			
-			// determine how may sets have passed for the day
-			int set = (int)(minutes / getSetTimeInMinutes(challenge, day)) + 1;
-		
-			return set;
-		}
-		
-		private int getSetTimeInMinutes(ChallengeInfo challenge, int day) {
-			Challenge c = challenges.getChallenge(challenge.getName());
-			switch (c.getSetInfo().get(day).getIntervalType()) {
-			case Hourly:
-				return 60;
-			case Daily:
-				return 1440;
-			case Weekly:
-				return 10080;
-			case Specific:
-				return c.getSetInfo().get(day).getIntervalValue();
+			// get the sets waiting notifications
+			boolean test = false;
+			List<SetInfo> sets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Test, SetStatus.New);
+			for (SetInfo s : sets) {
+				test = true;
+				s.setStatus(SetStatus.Notified);
+				ChallengeDB.getInstance(getApplicationContext()).updateSet(s);
+			}
+			sets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentDay, Type.Normal, SetStatus.New);
+			for (SetInfo s : sets) {
+				s.setStatus(SetStatus.Notified);
+				ChallengeDB.getInstance(getApplicationContext()).updateSet(s);
 			}
 			
-			return -1;
+			// get the content string
+			String content = "";
+			if (sets.size() == 0) {
+				content = getString(R.string.notification_test_content);
+			}
+			else if (sets.size() == 1) {
+				if (test) 
+					content = getString(R.string.notification_both_content);
+				else
+					content = getString(R.string.notification_normal_content);
+			}
+			else if (sets.size() > 1) {
+				if (test)
+					content = getString(R.string.notification_both_multiple_content);
+				else
+					content = getString(R.string.notification_normal_multiple_content);
+			}
+			
+			// build the inbox style content
+			//NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
+			//inbox.setBigContentTitle(getString(R.string.notification_title));
+			//for (String s : sets) {
+				//inbox.addLine(s);
+			//}
+			
+			// build the notification
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(getString(R.string.notification_title))
+				//.setStyle(inbox)
+				.setContentText(content);
+			
+			// issue the notification
+			NotificationManager mgr = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+			mgr.notify(0, builder.build());
+		}
+		
+		private boolean handleSets(int challengeId, Challenge challenge, int currentChallengeDay) {
+			
+			// figure out which interval is currently active
+			double rem = Math.IEEEremainder(currentChallengeDay, challenge.getSetInfo().size());
+			int currentInterval = (int) rem;
+			if (rem == 0) 
+				currentInterval = challenge.getSetInfo().size();
+			
+			// get the current set we should be on for the interval
+			String dayStartTime = preferences.getString(Constants.PREF_START_TIME, "08:00");
+			int set = DataHelper.getCurrentIntervalSet(dayStartTime, challenge, currentInterval);
+			
+			// adjust the number of sets by the number of tests
+			List<SetInfo> testSets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentChallengeDay, Type.Test);
+			set -= testSets.size();	
+			
+			// get the sets (both test and normal) currently in the db
+			List<SetInfo> sets = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentChallengeDay, Type.Normal);
+			for (int i = sets.size(); i <= set; i++) {
+				int value = DataHelper.getSetValue(challengeId, challenge.getSetInfo().get(currentInterval));
+				ChallengeDB.getInstance(getApplicationContext()).addSetEntry(challengeId, currentChallengeDay, Type.Normal, value);
+			}
+			
+			return false;
+		}
+	
+		private boolean handleTests(int challengeId, Challenge challenge, int currentChallengeDay) {
+		
+			// determine the interval
+			int interval = -1;
+			switch (challenge.getTestInfo().getIntervalType()) {
+			case Weekly:
+				interval = 7;
+				break;
+			case Daily:
+				interval = 1;
+				break;
+			default:
+				Log.e(Constants.APP_LOG_TAG, "Only weekly and hourly are supported test intervals.");
+				return false;
+			}
+			interval = 1;
+			
+			// determine how many tests should be in the database at this point
+			double rem = Math.IEEEremainder(currentChallengeDay, interval);
+			if (rem == 0) {
+				List<SetInfo> tests = ChallengeDB.getInstance(getApplicationContext()).getSets(challengeId, currentChallengeDay, Type.Test);
+				if (tests.size() == 0)
+				{
+					ChallengeDB.getInstance(getApplicationContext()).addSetEntry(challengeId, currentChallengeDay, Type.Test, -1);
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 	
@@ -120,8 +187,6 @@ public class ChallengeService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		challenges = ChallengeCollection.getInstance(getAssets());
-		db = ChallengeDB.getInstance(getApplicationContext());
 		
 		// create the new thread
 		HandlerThread thread = new HandlerThread("ServiceStartArguments", android.os.Process.THREAD_PRIORITY_BACKGROUND);

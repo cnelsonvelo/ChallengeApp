@@ -19,8 +19,26 @@ public class Constants {
 	 *
 	 */
 	public enum Type {
-		Test,
-		Normal
+		Test(0),
+		Normal(1);
+		
+		private final int value;
+		private Type(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+		
+		public static Type fromValue(int value) {
+			switch(value) {
+			case 1:
+				return Normal;
+			default:
+				return Test;
+			}
+		}
 	}
 	
 	public enum SetType {
@@ -35,6 +53,35 @@ public class Constants {
 		Daily,
 		Weekly,
 		Specific
+	}
+	
+	public enum SetStatus {
+		New(0),
+		Skipped(1),
+		Entered(2),
+		Notified(3);
+		
+		private final int value;
+		private SetStatus(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+		
+		public static SetStatus fromValue(int value) {
+			switch(value) {
+			case 1:
+				return Skipped;
+			case 2:
+				return Entered;
+			case 3:
+				return Notified;
+			default:
+				return New;
+			}
+		}
 	}
 	
 	public enum ChallengeStatus {

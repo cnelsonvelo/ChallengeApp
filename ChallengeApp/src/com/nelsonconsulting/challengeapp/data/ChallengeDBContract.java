@@ -16,6 +16,7 @@ public final class ChallengeDBContract {
 		public static final String COLUMN_NAME_ENTRY_DATETIME = "datetime";
 		public static final String COLUMN_NAME_INTERVAL = "interval";
 		public static final String COLUMN_NAME_ENTRY_TYPE = "type";
+		public static final String COLUMN_NAME_ENTRY_STATUS = "status";
 		public static final String COLUMN_NAME_ENTRY_VALUE = "value";
 		
 		public static final String SQL_CREATE_ENTRIES = 
@@ -25,6 +26,7 @@ public final class ChallengeDBContract {
 						COLUMN_NAME_ENTRY_DATETIME + " REAL," +
 						COLUMN_NAME_INTERVAL + " INTEGER," +
 						COLUMN_NAME_ENTRY_TYPE + " INTEGER," +
+						COLUMN_NAME_ENTRY_STATUS + " INTEGER," +
 						COLUMN_NAME_ENTRY_VALUE + " INTEGER" +
 						")";
 						
@@ -38,15 +40,13 @@ public final class ChallengeDBContract {
 		public static final String COLUMN_NAME_CHALLENGE_NAME = "challengename";
 		public static final String COLUMN_NAME_CHALLENGE_START = "startdate";
 		public static final String COLUMN_NAME_CHALLENGE_STATE = "state";
-		public static final String COLUMN_NAME_CHALLENGE_LAST = "lastinterval";
 		
 		public static final String SQL_CREATE_CHALLENGES = 
 				"CREATE TABLE " + TABLE_NAME + "(" + 
 						COLUMN_NAME_CHALLENGE_ID + " INTEGER PRIMARY KEY," +
 						COLUMN_NAME_CHALLENGE_NAME + " TEXT," +
 						COLUMN_NAME_CHALLENGE_START + " REAL," +
-						COLUMN_NAME_CHALLENGE_STATE + " INTEGER," +
-						COLUMN_NAME_CHALLENGE_LAST + " INTEGER" +
+						COLUMN_NAME_CHALLENGE_STATE + " INTEGER" +
 						")";
 		
 		public static final String SQL_DELETE_CHALLENGES =
