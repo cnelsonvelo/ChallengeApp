@@ -35,6 +35,8 @@
             </intent-filter>
         </receiver>
         
+        <receiver android:name=".receiver.AlarmReceiver" />
+        
         <service android:name=".services.ChallengeService" android:exported="false" />
         
     </application>

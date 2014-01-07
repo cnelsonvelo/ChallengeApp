@@ -255,7 +255,11 @@ public class ChallengeDB extends SQLiteOpenHelper {
 		v.put(SetEntries.COLUMN_NAME_ENTRY_STATUS, SetStatus.New.getValue());
 		v.put(SetEntries.COLUMN_NAME_INTERVAL, interval);
 		
-		return db.insert(SetEntries.TABLE_NAME, null, v);
+		long id = db.insert(SetEntries.TABLE_NAME, null, v);
+		
+		db.close();
+		
+		return id;
 	}
 	
 	/**
@@ -275,8 +279,11 @@ public class ChallengeDB extends SQLiteOpenHelper {
 				null,
 				null,
 				null);
+		int count = result.getCount();
 		
-		return result.getCount();
+		db.close();
+		
+		return count;
 	}
 	
 	/**
@@ -302,6 +309,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			ChallengeInfo info = new ChallengeInfo(result);
 			challenges.add(info);
 		}
+		
+		db.close();
 		
 		return challenges;
 	}
@@ -330,6 +339,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			challenges.add(info);
 		}
 		
+		db.close();
+		
 		return challenges;
 	}
 	
@@ -357,6 +368,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			info = new ChallengeInfo(result);
 		}
 		
+		db.close();
+		
 		return info;
 	}
 	
@@ -383,6 +396,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			sets.add(info);
 		}
 		
+		db.close();
+		
 		return sets;
 	}
 	
@@ -408,6 +423,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			SetInfo info = new SetInfo(result);
 			sets.add(info);
 		}
+		
+		db.close();
 		
 		return sets;
 	}
@@ -442,6 +459,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			SetInfo info = new SetInfo(result);
 			sets.add(info);
 		}
+		
+		db.close();
 		
 		return sets;
 	}
@@ -479,6 +498,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 			sets.add(info);
 		}
 		
+		db.close();
+		
 		return sets;
 	}
 	
@@ -496,6 +517,8 @@ public class ChallengeDB extends SQLiteOpenHelper {
 		v.put(Challenges.COLUMN_NAME_CHALLENGE_STATE, info.getStatus().getValue());
 		
 		db.update(Challenges.TABLE_NAME, v, Challenges.COLUMN_NAME_CHALLENGE_ID + "=?", new String[] { String.valueOf(info.getId()) });
+		
+		db.close();
 	}
 	
 	/**
@@ -512,5 +535,7 @@ public class ChallengeDB extends SQLiteOpenHelper {
 		v.put(SetEntries.COLUMN_NAME_ENTRY_VALUE, info.getValue());
 		
 		db.update(SetEntries.TABLE_NAME, v, SetEntries.COLUMN_NAME_ENTRY_ID + "=?", new String[] { String.valueOf(info.getId()) });
+		
+		db.close();
 	}
 }
